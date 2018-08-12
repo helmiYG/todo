@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <script>
+        let token = localStorage.getItem('token')
+        if(token){
+            window.location = `http://localhost:8080/home.html`
+        }
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '212838219575213',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v3.1'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) { 
+                if (response.status === 'connected') {
+                    var uid = response.authResponse.userID;
+                    var accessToken = response.authResponse.accessToken
+                    axios.post("http://localhost:3000/signin/facebook", { fbId: uid, accessToken: accessToken })
+                        .then((result) => {
+                            localStorage.setItem('token', result.data.token)
+                            window.location = `http://localhost:8080/home.html`
+                        })
+                        .catch((err) => {
+                           console.log(err);
+                           
+                        });
+
+                }
+            })
+        }
+    </script>
+
+    <div>
+        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+        <br>
+        <hr>
+    </div>
+</body>
+
+</html>

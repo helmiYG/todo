@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <div name="addtask">
+        input your task :
+        <input type="text" id="task">
+        <button onclick="add_task()">submit</button>
+    </div>
+
+    <div>
+        <table id="list"border='1'>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+            </tr>
+            
+        </table>
+    </div>
+    <button onclick="logout()">logout</button>
+    <script>
+        let token = localStorage.getItem('token')
+        if (!token) {
+            window.location = `http://localhost:8080/index.html`
+        }
+
+        function logout() {
+            localStorage.removeItem('token')
+            window.location = `http://localhost:8080/index.html`
+        }
+
+        function add_task() {
+            let task = $("#task").val()
+            axios.post('http://localhost:3000/task', { task })
+                .then((result) => {
+                    console.log(result);
+
+                })
+                .catch((err) => {
+                    console.log(err);
+
+                });
+        }
+
+        function edit() {
+           let id = $("#edit_task").val()
+            axios.put('http://localhost:3000/task',{id})
+        }
+
+        function remove(id) {
+           console.log(id);
+           
+            
+            let id = $("#delete_task").val()
+            console.log(id);
+            axios.delete(`http://localhost:3000/task/${id}`)
+            .then((result) => {
+                console.log(result);
+                
+            })
+            .catch((err) => {
+                console.log(err.message);
+                
+            });
+        }
+        
+        axios.get('http://localhost:3000/task')
+        .then((result) => {
+            console.log(result.data.tasks);
+            result.data.tasks.forEach((task, i) => {
+                $("#list").append(`
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${task.task}</td>
+                    <td>${task._id}</td>
+                    <td><button value=${task._id} id="edit_task" onclick="edit(${task._id})"> Edit</button> || 
+                        <button value=${task._id} id="delete_task" onclick="remove(${task._id})"> Delete</button>
+                    </td>
+                </tr>
+                `)
+            });
+            
+        })
+        .catch((err) => {
+            console.log(err);
+            
+        });
+    </script>
+</body>
+
+</html>
