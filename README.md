@@ -22,8 +22,8 @@ _/task/:id_ | PUT | update data task
 _/task/:id_ | DELETE | delete data task 
 _/task/done/:id_ | PUT | update task as done/complete
 _/task/reminder/:token_ | GET | cek reminder
-_/task/todayTasks/:token_ | POST | get today tasks
-_/task/donetask/_ | POST | get completed tasks 
+_/task/todayTasks/:token_ | GET | get today tasks
+_/task/donetask/_ | GET | get completed tasks 
 
 list routes of Weather : 
 
