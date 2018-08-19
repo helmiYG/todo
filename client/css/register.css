@@ -1,0 +1,16 @@
+.register {
+    margin: 120px auto;
+    border: 1px solid;
+    padding: 30px;
+    width: 300px
+}
+
+.input {
+    margin: 15px auto;
+    height: 30px;
+    width: 300px;
+}
+
+h1 {
+    text-align: center
+}

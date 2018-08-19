@@ -1,62 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- c0f5653f2bb441dc92f13d7d62246916 -->
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+        crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/sweetalert2@7.19.3/dist/sweetalert2.all.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Jua|Pacifico" rel="stylesheet">
+    <link rel="stylesheet" href="./css/index.css" type="text/css">
 </head>
 
 <body>
-    <script>
-        let token = localStorage.getItem('token')
-        if(token){
-            window.location = `http://localhost:8080/home.html`
-        }
-        window.fbAsyncInit = function () {
-            FB.init({
-                appId: '212838219575213',
-                autoLogAppEvents: true,
-                xfbml: true,
-                version: 'v3.1'
-            });
-        };
+    <div id="app">
+        <!-- Image and text -->
+        <nav class="navbar navbar-light bg-primary">
+            <a class="navbar-brand" href="#">
+                <img src="#" width="30" height="30" class="d-inline-block align-top" alt="">
+                <h3>TODO FANCY </h3>
+            </a>
+            <div>
+                <button type="button" class="btn btn-light" v-on:click="getWeather" data-toggle="modal" data-target="#weather">Weather</button>
+                <button type="submit" class="btn btn-light" data-toggle="modal" data-target="#addtask">New Task</button>
+                <button type="button" class="btn btn-light" v-on:click="logout">logout</button>
+            </div>
+        </nav>
 
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+        <!-- Weather -->
+        <div>
+            <div class="modal fade" id="weather" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Weather</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                <i class="fas fa-map-marker-alt"></i> {{weather.loc}} </p>
+                            <p>
+                                <i class="fas fa-sun"></i> {{weather.temp}} Celcius</p>
+                            <p>
+                                <i class="fas fa-cloud"></i> {{weather.desc}} </p>
+                        </div>
 
-        function checkLoginState() {
-            FB.getLoginStatus(function (response) { 
-                if (response.status === 'connected') {
-                    var uid = response.authResponse.userID;
-                    var accessToken = response.authResponse.accessToken
-                    axios.post("http://localhost:3000/signin/facebook", { fbId: uid, accessToken: accessToken })
-                        .then((result) => {
-                            localStorage.setItem('token', result.data.token)
-                            window.location = `http://localhost:8080/home.html`
-                        })
-                        .catch((err) => {
-                           console.log(err);
-                           
-                        });
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- add task -->
+        <div>
+            <div class="modal fade" id="addtask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginform">Add New Task</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <table>
+                                        <tr>
+                                            <th>Task Name </th>
+                                            <td>
+                                                <input type="text" v-model='task'> </td>
+                                        </tr>
+                                        <tr>
+                                            <th>D- Day </th>
+                                            <td>
+                                                <input type="date" v-model="d_day"> </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Reminder </th>
+                                            <td>
+                                                <input type="date" v-model="reminder">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Description </th>
+                                            <td>
+                                                <textarea name="" id="" cols="25" rows="5" v-model="description"></textarea>
+                                            </td>
+                                        </tr>
 
-                }
-            })
-        }
-    </script>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" v-on:click="addTask" data-dismiss="modal">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div>
-        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+        <!-- update task -->
+        <div>
+            <div class="modal fade" id="updateTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginform">Update Task</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <table>
+                                        <tr>
+                                            <th>Task Name </th>
+                                            <td>
+                                                <input type="text" v-model='task'> </td>
+                                        </tr>
+                                        <tr>
+                                            <th>D- Day </th>
+                                            <td>
+                                                <input type="date" v-model="d_day"> </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Reminder </th>
+                                            <td>
+                                                <input type="date" v-model="reminder">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Description </th>
+                                            <td>
+                                                <textarea name="" id="" cols="25" rows="5" v-model="description"></textarea>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" v-on:click="updateTask(id)" data-dismiss="modal">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br>
-        <hr>
+
+        <div class="container">
+            <h2> Welcome {{userLogedIn}} </h2>
+            <h5>theese are your today tasks : </h5>
+            <div class="row">
+                <div class="col-md-4" v-for="task in todayTasks">
+                <div v-if="counterTodayTask > 0">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <div v-if="task.status === false">
+                                    <h5 class="card-title">Task: {{task.task}} </h5>
+                                </div>
+                                <div v-else>
+                                        <h5 class="card-title">Task: {{task.task}} <i class="far fa-star"></i> </h5>
+                                </div>
+                                <hr>
+                                <p class="card-text">Description : {{task.description}} </p>
+                                <div v-if="task.status === false">
+                                    <button type="button" class="btn btn-success btn-sm" v-on:click="tasktoUpdate(task)" data-toggle="modal" data-target="#updateTask">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" v-on:click="taskToDelete(task._id)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" v-on:click="taskDone(task._id)">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                </div>
+                                <div v-else>
+                                    <button type="button" class="btn btn-success btn-sm" v-on:click="tasktoUpdate(task)" data-toggle="modal" data-target="#updateTask">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" v-on:click="taskToDelete(task._id)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-else-if="counterTodayTask === 0">
+                    <p style="margin-left: 10px">you dont have any task today</p>
+                </div>
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <button id="not" class="btn btn-primary btn-sm" type="button" v-on:click="notfinished">SHOW YOUR NOT FINISHED TASKS</button>
+                    <button id="yes" class="btn btn-primary btn-sm" type="button" v-on:click="doneTask">SHOW YOUR FINISHED TASKS</button>
+                </div>
+            </div>
+            <div class="row" style="text-align: center">
+                <div class="col-md-12"></div>
+                <div class="list-task">
+                    <table border="1px" class="preview-tasks class">
+                        <tr>
+                            <th>Task Name</th>
+                            <th>D-Day</th>
+                            <th>Reminder</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr v-for="task in tasks">
+                            <td> {{task.task}} </td>
+                            <td> {{formatDate(task.d_day)}}</td>
+                            <td> {{formatDate(task.reminder)}}</td>
+                            <td> {{task.description}} </td>
+                            <td v-if="task.status === false">
+                                <button type="button" class="btn btn-success btn-sm" v-on:click="tasktoUpdate(task)" data-toggle="modal" data-target="#updateTask">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" v-on:click="taskToDelete(task._id)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" v-on:click="taskDone(task._id)">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </td>
+                            <td v-else>
+                                <button type="button" class="btn btn-danger btn-sm" v-on:click="taskToDelete(task._id)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+
+    </div>
+
 </body>
+
+<script>
+    let token = localStorage.getItem('token')
+    if (!token) {
+        window.location = 'http://localhost:8080/signin.html'
+    }
+
+    function reminder() {
+        let token = localStorage.getItem('token')
+        axios.get(`http://localhost:3000/task/reminder/${token}`)
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+    reminder()
+
+
+    new Vue({
+        el: '#app',
+        data: {
+            id: '',
+            task: '',
+            d_day: '',
+            description: '',
+            city: '',
+            reminder: '',
+            tasks: [],
+            userLogedIn: '',
+            counterTodayTask: '',
+            todayTasks: [],
+            weather: {},
+        },
+        methods: {
+            addTask() {
+                event.preventDefault()
+                let token = localStorage.getItem('token')
+                axios.post('http://localhost:3000/task/insert', {
+                    task: this.task,
+                    d_day: this.d_day,
+                    description: this.description,
+                    reminder: this.reminder,
+                    city: this.city,
+                    token: token,
+                })
+                    .then((result) => {
+                        swal({
+                            type: 'success',
+                            title: 'new task has been added',
+
+                        })
+                    })
+                    .catch((err) => {
+                        swal({
+                            type: 'error',
+                            title: 'Add Task Failed',
+                            text: 'task name and d-day form must be filled',
+                        })
+                    });
+            },
+            logout() {
+                localStorage.removeItem('token')
+                window.location = 'http://localhost:8080/signin.html'
+            },
+            taskToDelete(id) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
+                    .then((result) => {
+                        if (result.value) {
+                            axios.delete(`http://localhost:3000/task/${id}`)
+                                .then((result) => {
+                                    swal(
+                                        'Deleted!',
+                                        'Your file has been deleted.',
+                                        'success'
+                                    )
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                });
+
+                        }
+                    })
+
+            },
+
+            taskDone(id) {
+                axios.put(`http://localhost:3000/task/done/${id}`)
+                    .then((result) => {
+                        swal({
+                            type: 'success',
+                            title: 'Great !, you just complete a task',
+
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            },
+            formatDate(date) {
+                var monthNames = [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"
+                ];
+
+                let day = date.slice(8, 10);
+                let month = date.slice(6, 7);
+                let year = date.slice(0, 4);
+
+                if (month > 9) {
+                    month = `1${month}`;
+                }
+
+                return day + " " + monthNames[month - 1] + " " + year;
+            },
+
+            todayTask() {
+                event.preventDefault()
+                let token = localStorage.getItem('token')
+                axios.get(`http://localhost:3000/task/todayTasks/${token}`)
+                    .then((result) => {
+
+                        if (result.data.length > 0) {
+                            this.counterTodayTask = 1
+                            this.todayTasks = result.data
+                        } else {
+                            this.counterTodayTask = 0
+                        }
+
+                    })
+                    .catch((err) => {
+                        console.log(err);
+
+                    });
+            },
+
+            tasktoUpdate(task) {
+                this.id = task._id
+                this.task = task.task
+                this.d_day = task.d_day.slice(0, 10)
+                this.description = task.description
+                this.city = task.city,
+                    this.reminder = task.reminder.slice(0, 10)
+            },
+            updateTask(id) {
+                axios.put(`http://localhost:3000/task/${id}`, {
+                    task: this.task,
+                    d_day: this.d_day,
+                    description: this.description,
+                    city: this.city,
+                    reminder: this.reminder
+                })
+                    .then((result) => {
+                        swal({
+                            type: 'success',
+                            title: 'Task updated',
+                        })
+                    })
+                    .catch((err) => {
+                        swal({
+                            type: 'error',
+                            title: 'Update Task Failed',
+                            text: 'task name and d-day form must be filled',
+                        })
+                    });
+            },
+
+            doneTask() {
+                let token = localStorage.getItem('token')
+                axios.get(`http://localhost:3000/task/doneTask/${token}`)
+
+                    .then((result) => {
+                        this.tasks = result.data.tasks
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            },
+
+            notfinished() {
+                let token = localStorage.getItem('token')
+                axios.get(`http://localhost:3000/task/${token}`)
+                    .then((result) => {
+                        this.tasks = result.data.tasks
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            },
+
+            getWeather() {
+                let token = localStorage.getItem('token')
+                axios.get(`http://localhost:3000/weather/${token}`)
+                    .then((result) => {
+                        this.weather = result.data
+
+                    })
+                    .catch((err) => {
+                        console.log(err);
+
+                    });
+            }
+        },
+
+        mounted() {
+            let token = localStorage.getItem('token')
+            if (token) {
+                axios.get(`http://localhost:3000/task/todayTasks/${token}`)
+                    .then((result) => {
+                        this.userLogedIn = result.data.name
+                        if (result.data.dataTodayTask.length > 0) {
+                            this.counterTodayTask = 1
+                            this.todayTasks = result.data.dataTodayTask
+                        } else {
+                            this.counterTodayTask = 0
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+
+                    });
+            }
+        },
+
+    })
+</script>
 
 </html>

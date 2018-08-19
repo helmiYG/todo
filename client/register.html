@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>REGISTER</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/sweetalert2@7.19.3/dist/sweetalert2.all.js"></script>
+    <link rel="stylesheet" href="./css/register.css" type="text/css">
+</head>
+
+<body>
+    <div id="app">
+        <form class="register">
+            <h1 class="title"> REGISTER</h1>
+            <input type="text" placeholder="name" v-model="name" class="input">
+            <input type="text" placeholder="city" v-model="city" class="input">
+            <input type="text" placeholder="email" v-model="email" class="input">
+            <input type="password" placeholder="password" v-model="password" class="input">
+            <button type="button" v-on:click="register">submit</button>
+            <button type="button" v-on:click="back">Back</button>
+        </form>
+    </div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            name: '',
+            email: '',
+            password: '',
+            city: '',
+        },
+
+        methods: {
+            register() {
+                event.preventDefault()
+                axios.post('http://localhost:3000/', {
+                    name: this.name,
+                    city: this.city,
+                    email: this.email,
+                    password: this.password
+                })
+                    .then((result) => {
+                        swal({
+                            type: 'success',
+                            title: 'Yeay, you have registered',
+                            
+                        })
+                        setInterval(function(){
+                            window.location = 'http://localhost:8080/signin.html'
+                            
+                        }, 1000)
+                    })
+                    .catch((err) => {
+                        if (err) {
+                            swal({
+                                type: 'error',
+                                title: 'Registration Failed',
+                                text: 'you didnt fill all form or your email already to use ',
+                            })
+                        }
+                    });
+            },
+
+            back(){
+                window.location = 'http://localhost:8080/signin.html'
+            }
+        }
+    })
+</script>
+
+</html>

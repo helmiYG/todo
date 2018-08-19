@@ -1,0 +1,21 @@
+.login-title {
+    text-align: center
+}
+.login {
+    margin: 120px auto;
+    width: 350px;
+    border: 1px solid;
+    padding: 30px;
+}
+.login-input {
+    margin: 10px auto;
+    height: 30px;
+    border: 1px solid;
+    width: 290px
+}
+body {
+    font-family: 'Jua', sans-serif;
+}
+p {
+    margin: 0%
+}

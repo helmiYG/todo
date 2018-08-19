@@ -3,16 +3,17 @@ var bcrypt = require('bcryptjs');
 var salt = bcrypt.genSaltSync(10);
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
 
 module.exports = {
     register: (req, res) => {
-        let { name, email, password, idFb } = req.body
+        let { name, city, email, password } = req.body
         let hash = bcrypt.hashSync(password, salt);
         User.create({
             name: name,
+            city: city,
             email: email,
             password: hash,
-            idFb: idFb
         })
 
             .then((result) => {
@@ -95,12 +96,12 @@ module.exports = {
            User.findOne({email : result.data.email})
             .then((user) => {
                if(user){
-                    console.log('diatas',user);
                     let token = jwt.sign({
                         id: user._id,
                         name: user.name,
+                        city: 'tasikmalaya',
                         email: user.email
-                    },'secret-key')
+                    },process.env.secretKey)
                     
                     res.status(200).json({
                        msg: 'login succes',
@@ -116,7 +117,7 @@ module.exports = {
                             id: newUser._id,
                             name: newUser.name,
                             email: newUser.email
-                        },'secret-key')
+                        },process.env.secretKey)
 
                         res.status(200).json({
                             msg: 'login succes',
@@ -141,6 +142,37 @@ module.exports = {
             res.status(500).json({
                 msg: err.message
             })
+        });
+    },
+
+    signin:(req, res) => {
+        User.findOne({email: req.body.email})
+        .then((userLogin) => {
+           let result =  bcrypt.compareSync(req.body.password, userLogin.password);
+           if(result){
+               let token = jwt.sign({
+                   id: userLogin.id,
+                   name: userLogin.name,
+                   city: userLogin.city,
+                   email: userLogin.email,
+                   password: userLogin.password
+               },process.env.secretKey)
+
+               res.status(200).json({
+                   msg:'login succes',
+                   token
+                })
+           }else{
+               res.status(500).json({
+                   msg: 'username/ password wrong'
+               })
+           }
+        })
+        .catch((err) => {
+            res.status(500).json({
+                msg: 'password/ email wrong'
+            })
+
         });
     }
 };

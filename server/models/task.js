@@ -2,9 +2,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var taskSchema = new Schema({
-  task:  String,
+  task:  {type: String, required : true},
   description : String,
+  d_day: {type: Date, required : true},
+  reminder: {type : Date},
   status: {type:Boolean, default: false},
+  userId: { type: Schema.Types.ObjectId, ref: 'User' },
 }, {
   timestamps: true,
 });

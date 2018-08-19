@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.26.11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Jua|Pacifico" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert2@7.19.3/dist/sweetalert2.all.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/signin.css" type="text/css">
+</head>
+
+<body>
+    <script>
+        let token = localStorage.getItem('token')
+        if (token) {
+            window.location = `http://localhost:8080/index.html`
+        }
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '212838219575213',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v3.1'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                if (response.status === 'connected') {
+                    var uid = response.authResponse.userID;
+                    var accessToken = response.authResponse.accessToken
+                    axios.post("http://localhost:3000/signin/facebook", { fbId: uid, accessToken: accessToken })
+                        .then((result) => {
+                            localStorage.setItem('token', result.data.token)
+                            window.location = `http://localhost:8080/index.html`
+                        })
+                        .catch((err) => {
+                            console.log(err);
+
+                        });
+
+                }
+            })
+        }
+    </script>
+
+    <div id="app">
+        <form class="login">
+            <h1 class="login-title">Todo Fancy</h1>
+            <input v-model="email" type="email" class="login-input" placeholder="Email Adress">
+            <input v-model="password" type="password" class="login-input" placeholder="Password">
+            <br>
+            <button type="button" class="btn btn-primary btn-sm" v-on:click="login()">Signin</button>
+            <p>belum punya akun? silakan
+                <a href="register.html">register</a>
+            </p>
+            <p>
+                login with facebook
+                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+            </p>
+        </form>
+    </div>
+</body>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            email: '',
+            password: ''
+        },
+
+        methods: {
+            login() {
+                event.preventDefault()
+                axios.post('http://localhost:3000/signin', {
+                    email: this.email,
+                    password: this.password
+                })
+                    .then((result) => {
+                        localStorage.setItem('token', result.data.token)
+                        swal({
+                            type: 'success',
+                            title: 'Signed in successfully',
+                            
+                        })
+                        setInterval(function(){
+                            window.location = 'http://localhost:8080/index.html'
+                        }, 1000)
+                    })
+                    .catch((err) => {
+                        swal({
+                                type: 'error',
+                                title: 'Login Failed',
+                                text: 'you didnt fill all form or your email/password wrong',
+                            })
+                    });
+            }
+        }
+    })
+</script>
+
+</html>
